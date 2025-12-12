@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit User</title>
+</head>
+<body>
+
+<h2>Edit User</h2>
+
+<form action="/admin/edit/<%= user._id %>" method="post">
+  <label>Email</label><br>
+  <input type="email" name="email" value="<%= user.email %>" >
+  <br><br>
+
+  <label>New Password (optional)</label><br>
+  <input type="password" name="password" placeholder="Enter new password">
+  <br><br>
+
+  <button type="submit">Update</button>
+</form>
+
+<a href="/admin/dashboard">Back</a>
+
+</body>
+</html>

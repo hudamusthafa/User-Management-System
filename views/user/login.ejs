@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" integrity="sha512-PgQMlq+nqFLV4ylk1gwUOgm6CtIIXkKwaIHp/PAIWHzig/lKZSEGKEysh0TCVbHJXCLN7WetD8TFecIky75ZfQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/styles/userlogin.css">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+<body>
+        <div class="alert show hide alert-wrong" id="alert">
+            <span class="fas fa-exclamation-circle"></span>
+            <span class="msg">Invalid Username and Password</span>
+            <span class="close-btn">
+                <span class="fas fa-times" onclick="hidefun()"></span>
+            </span>
+        </div>
+
+
+
+    <div class="container">
+     
+        <div class="signin">
+            <h1>Login</h1>
+            <form method="post"  action="/user/login">
+                <input type="email" id="email" name="email" placeholder="Email" >
+                <input type="password" id="password" name="password"  placeholder="Password" >
+
+                <button type="submit" id="button" onclick="getInfo(event)"  href="welcome.html">Login</button>
+         
+                <!-- <input type="submit" id="button" onclick="getInfo()" value="Login"> -->
+            </form>
+        </div>
+    </div>
+    <script >
+
+       
+     document.addEventListener("DOMContentLoaded",function (){
+       document.querySelector('form').addEventListener('submit',formValidate);
+    });
+
+    const message = "<%= typeof message !== 'undefined' ? message : '' %>";
+
+  if (message.trim() !== "") {
+    swal(message);
+  }
+
+
+         function formValidate(e){
+
+          e.preventDefault();
+
+          var email = document.getElementById('email').value;
+          var password = document.getElementById('password').value;
+         
+
+          if(email == "" || password == ""){
+            swal("All fields are required");
+            return false;
+          }
+          e.target.submit();
+          return true;
+         }
+    
+
+  
+    </script>
+
+</body>
+</html>

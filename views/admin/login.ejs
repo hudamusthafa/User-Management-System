@@ -1,0 +1,114 @@
+<!-- 
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/styles/adminlogin.css">
+</head>
+<body>
+  <div class="login-box">
+  <h2>Admin Login</h2>
+  <form action="/admin/login" method="post">
+    <div class="user-box">
+      <input type="text" name="" required="">
+      <label>Email</label>
+    </div>
+    <div class="user-box">
+      <input type="password" name="" required="">
+      <label>Password</label>
+    </div>
+    <a href="#">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      Submit
+    </a>
+  </form>
+</div>
+</body>
+</html>
+
+ -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="/styles/adminlogin.css">
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+
+<body>
+
+<div class="login-box">
+  <h2>Admin Login</h2>
+
+  <form action="/admin/login" method="post" id="adminLoginForm">
+
+    <div class="user-box">
+      <input type="text" id="email" name="email">
+      <label>Email</label>
+    </div>
+
+    <div class="user-box">
+      <input type="password" id="password" name="password">
+      <label>Password</label>
+    </div>
+
+    <!-- REPLACE <a> WITH SUBMIT BUTTON -->
+    <!--<button type="submit" class="submit-btn">Submit</button>-->
+    <button type="submit" class="btn-animate">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    Submit
+</button>
+
+  </form>
+</div>
+
+<script>
+  // Same validation logic as user login
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('adminLoginForm').addEventListener('submit', validateAdminForm);
+  });
+
+
+  const message = "<%= typeof message !== 'undefined' ? message : '' %>";
+
+if (message.trim() !== "") {
+  swal(message);
+}
+
+
+
+
+  function validateAdminForm(e) {
+    e.preventDefault();
+
+    let email = document.getElementById('email').value.trim();
+    let password = document.getElementById('password').value.trim();
+
+    if (email === "" || password === "") {
+      swal("All fields are required");
+      return false;
+    }
+
+    // If everything is valid → submit form
+    e.target.submit();
+    return true;
+  }
+</script>
+
+</body>
+</html>

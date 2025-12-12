@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+   <link rel="stylesheet" href="/styles/admindashboard.css">
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+</head>
+
+<body>
+
+  <div class="topbar">
+    <h1>Admin Dashboard</h1>
+
+    <div class="top-buttons">
+        <a href="/admin/addUserPage" class="btn add">Add User</a>
+        <a href="/admin/logout" class="btn logout">Logout</a>
+    </div>
+</div>
+
+
+  <!-- Search Box -->
+  <form action="/admin/search" method="get">
+    <input type="text" name="query" placeholder="Search user by email...">
+    <button type="submit">Search</button>
+  </form>
+
+  <!-- Add User -->
+ <!--<a href="/admin/addUserPage" class="add-btn">Add User</a>-->
+
+
+  <!-- User Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% users.forEach(u => { %>
+        <tr>
+          <td><%= u.email %></td>
+         <td>
+    <a href="/admin/edit/<%= u._id %>" class="action-btn btn-edit">Edit</a>
+    <button class="action-btn btn-delete" onclick="confirmDelete('<%= u._id %>')">Delete</button>
+</td>
+
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<script>
+  function confirmDelete(userId) {
+    swal({
+      title: "Are you sure?",
+      text: "Once deleted, the user cannot be recovered!",
+      icon: "warning",
+      buttons: ["Cancel", "Yes, Delete"],
+      dangerMode: true,
+    })
+    .then((willDelete) => {
+      if (willDelete) {
+        window.location.href = "/admin/delete/" + userId;
+      }
+    });
+  }
+</script>
+
+
+
+
+</body>
+</html>

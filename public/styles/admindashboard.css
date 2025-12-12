@@ -1,0 +1,123 @@
+body {
+  font-family: Arial;
+  margin: 20px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.topbar a {
+  padding: 8px 12px;
+  background: #0099ff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+button {
+  padding: 8px 12px;
+  background: #0099ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+
+
+.logout-btn {
+  padding: 8px 16px !important;
+  background: #0099ff;
+  color: #fff;
+  border-radius: 6px;
+  display: inline-block;
+  font-size: 14px;
+  text-decoration: none;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+/* Hover effect */
+.logout-btn:hover {
+  background: #0077cc;
+}
+.add-btn {
+  background: #0099ff;
+  padding: 8px 16px;
+  color: white;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.action-btn {
+  padding: 4px 10px;
+  border-radius: 5px;
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px; /* SAME HEIGHT */
+}
+
+/* Edit button */
+.btn-edit {
+  background: #ffae00;
+}
+
+/* Delete button */
+.btn-delete {
+  background: #e60000;
+}
+
+table td, table th {
+  padding: 5px 10px;
+}
+
+table tr {
+  height: 32px;
+}
+
+/* FORCE BOTH BUTTONS TO SAME SIZE */
+.action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  height: 28px !important;     /* Adjust height */
+  padding: 0 12px !important;  /* Equal padding */
+  font-size: 13px !important;
+  border-radius: 6px !important;
+
+  color: white !important;
+  text-decoration: none !important;
+}
+
+/* Edit button */
+.btn-edit {
+  background: #ffae00 !important;
+}
+
+/* Delete button */
+.btn-delete {
+  background: #e60000 !important;
+}
