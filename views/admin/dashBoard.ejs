@@ -3,55 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard</title>
-   <link rel="stylesheet" href="/styles/admindashboard.css">
+  <link rel="stylesheet" href="/styles/admindashboard.css">
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
 </head>
 
 <body>
 
-  <div class="topbar">
-    <h1>Admin Dashboard</h1>
+<script>
+  // OPTIONAL: only lock dashboard AFTER login (not required for cache)
+  history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+      history.go(1); // stay on dashboard
+  };
+</script>
 
-    <div class="top-buttons">
-        <a href="/admin/addUserPage" class="btn add">Add User</a>
-        <a href="/admin/logout" class="btn logout">Logout</a>
-    </div>
+<div class="topbar">
+  <h1>Admin Dashboard</h1>
+  <div class="top-buttons">
+      <a href="/admin/addUserPage" class="btn add">Add User</a>
+      <a href="/admin/logout" class="btn logout">Logout</a>
+  </div>
 </div>
 
+<form action="/admin/search" method="get" style="display:flex; gap:10px;">
+  <input 
+    type="text" 
+    name="query" 
+    placeholder="Search user by email..." 
+    value="<%= typeof query !== 'undefined' ? query : '' %>"
+  >
+  <button type="submit">Search</button>
 
-  <!-- Search Box -->
-  <form action="/admin/search" method="get">
-    <input type="text" name="query" placeholder="Search user by email...">
-    <button type="submit">Search</button>
-  </form>
+  <% if (typeof query !== 'undefined') { %>
+    <a href="/admin/dashboard" class="btn" 
+       style="padding:6px 12px; background:#ccc; text-decoration:none;">
+      Clear
+    </a>
+  <% } %>
+</form>
 
-  <!-- Add User -->
- <!--<a href="/admin/addUserPage" class="add-btn">Add User</a>-->
 
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Action</th>
+    </tr>
+  </thead>
 
-  <!-- User Table -->
-  <table>
-    <thead>
+  <tbody>
+    <% users.forEach(u => { %>
       <tr>
-        <th>Email</th>
-        <th>Action</th>
+        <td><%= u.email %></td>
+        <td>
+          <a href="/admin/edit/<%= u._id %>" class="action-btn btn-edit">Edit</a>
+          <button class="action-btn btn-delete" onclick="confirmDelete('<%= u._id %>')">Delete</button>
+        </td>
       </tr>
-    </thead>
-
-    <tbody>
-      <% users.forEach(u => { %>
-        <tr>
-          <td><%= u.email %></td>
-         <td>
-    <a href="/admin/edit/<%= u._id %>" class="action-btn btn-edit">Edit</a>
-    <button class="action-btn btn-delete" onclick="confirmDelete('<%= u._id %>')">Delete</button>
-</td>
-
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
+    <% }) %>
+  </tbody>
+</table>
 <script>
   function confirmDelete(userId) {
     swal({
@@ -63,14 +74,12 @@
     })
     .then((willDelete) => {
       if (willDelete) {
-        window.location.href = "/admin/delete/" + userId;
+        // Using assign() to avoid conflict with history blocking
+        window.location.assign("/admin/delete/" + userId);
       }
     });
   }
 </script>
-
-
-
 
 </body>
 </html>

@@ -1,43 +1,43 @@
-const express = require('express')
-const router = express.Router()
-const adminController = require('../controller/adminController')
-const adminAuth = require('../middleware/adminAuth')
+const express = require('express');
+const router = express.Router();
+const adminController = require('../controller/adminController');
+const adminAuth = require('../middleware/adminAuth');
+const noCache = require('../middleware/noCache');
 
-router.get("/login",adminAuth.isLogin,adminController.loadLogin)
-router.post("/login",adminController.login)
-router.get("/dashboard",adminAuth.checkSession,adminController.loadDashboard)
+// LOGIN PAGE
+router.get("/login", adminAuth.isLogin, adminController.loadLogin);
+router.post("/login", adminController.login);
 
+// DASHBOARD
+router.get("/dashboard", adminAuth.checkSession, noCache, adminController.loadDashboard);
 
+// ADD USER PAGE
+router.get("/addUserPage", adminAuth.checkSession, noCache, adminController.loadAddUserPage);
 
+// SAVE NEW USER
+router.post("/addUser", adminAuth.checkSession, noCache, adminController.addUser);
 
-// Save new user (POST)
-router.post("/addUser", adminAuth.checkSession, adminController.addUser);
-// Show Add User Page
+// DELETE USER
+router.get("/delete/:id", adminAuth.checkSession, noCache, adminController.deleteUser);
 
-router.get("/addUserPage", adminAuth.checkSession, adminController.loadAddUserPage);
+// SEARCH USER
+router.get("/search", adminAuth.checkSession, noCache, adminController.searchUser);
 
-// Delete user
-router.get("/delete/:id", adminAuth.checkSession, adminController.deleteUser);
+// EDIT USER PAGE
+//router.get("/edit/:id", adminAuth.checkSession, noCache, adminController.loadEditPage);
+router.get("/edit/:id", adminAuth.checkSession, noCache, async (req, res) => {
+    await adminController.loadEditPage(req, res);
 
-// Search user
-router.get("/search", adminAuth.checkSession, adminController.searchUser);
+    // 🔥 Prevent this edit page from being stored in browser history
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+});
 
-// Logout
+// UPDATE USER
+router.post("/edit/:id", adminAuth.checkSession, noCache, adminController.updateUser);
+
+// LOGOUT
 router.get("/logout", adminController.logout);
 
-//Edit User Page
-router.get('/edit/:id', adminAuth.checkSession, adminController.loadEditPage);
-//Update User
-router.post('/edit/:id', adminAuth.checkSession, adminController.updateUser);
-
-
-
-
-
-
-
-
-
-
-
-module.exports = router
+module.exports = router;

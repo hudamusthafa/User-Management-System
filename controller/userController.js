@@ -1,93 +1,120 @@
-const userSchema = require('../model/userModel')
-const bcrypt = require('bcryptjs')
+const User = require('../model/userModel');
+const bcrypt = require('bcryptjs');
 const saltround = 10;
 
-const registerUser = async (req,res)=>{
 
-try{
+// ======================= REGISTER USER =======================
+const registerUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
 
-  const {email,password} =req.body
-  
-  const user =await userSchema.findOne({email})
-  if(user){
-    return res.render('user/register',{message :'User already exists'})
-  }
+        // simple empty validation
+        if (!email || !password) {
+            return res.render('user/register', { message: 'All fields are required' });
+        }
 
-  const hashedPassword = await bcrypt.hash(password,saltround);
+        // check duplicate email
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+            return res.render('user/register', { message: 'User already exists' });
+        }
 
-  const newUser = new userSchema({
-    email,
-    password:hashedPassword
-  })
-  await newUser.save();
+        // hash password
+        const hashedPassword = await bcrypt.hash(password, saltround);
 
-  res.render('user/login',{message :'User created successfully'})
+        // save user
+        await User.create({
+            email,
+            password: hashedPassword
+        });
 
-}catch(error){
-   res.render('user/register',{message:'something went wrong'})
-}
+        return res.render('user/login', { message: 'User created successfully' });
+
+    } catch (error) {
+        console.log(error);
+        res.render('user/register', { message: 'Something went wrong' });
+    }
 };
 
-const logout = (req,res)=>{
-  req.session.user = null; //remove session
- res.setHeader("Cache-Control", "no-store");  // prevent back button
 
-  return res.redirect('/user/login');  // correct redirect
-}
+// ========================== LOGIN ============================
+const login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
 
+        if (!email || !password) {
+            return res.render('user/login', { message: 'All fields are required' });
+        }
 
+        // find user
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.render('user/login', { message: 'User does not exist' });
+        }
 
-const login = async (req,res)=>{
-  try {
-    const {email,password} =req.body
+        // compare passwords
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.render('user/login', { message: 'Incorrect password' });
+        }
 
-    //check user exists
-    const user = await userSchema.findOne({email})
-    if(!user)
-      return res.render ('user/login',{message:'User does not exist'})
-    
-    //compare password
-     const isMatch = await bcrypt.compare(password,user.password)
+        // save session
+        req.session.user = user._id;
 
-    if(!isMatch)
-      return res.render ('user/login',{message:'Incorrect password'})
-    
-    req.session.user = true 
-    //success
-    //res.render('user/login',{message:'Login Successful'})
-    res.redirect('/user/home')
+        return res.redirect('/user/home');
 
-  } catch (error) {
-    res.render('user/login', {message : 'Something went wrong'});
-  }
-}
-
+    } catch (error) {
+        console.log(error);
+        return res.render('user/login', { message: 'Something went wrong' });
+    }
+};
 
 
-const loadRegister = (req,res) =>{
-  res.render('user/register')
-}
+// ========================== HOME PAGE ============================
+const loadHome = (req, res) => {
+    // protect route
+    if (!req.session.user) {
+        return res.redirect('/user/login');
+    }
 
-const loadLogin = (req,res) =>{
-  res.render('user/login')
-}
+    // prevent back button showing cached home
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
 
-const loadHome = (req,res) =>{
-  res.render('user/userhome')
-}
+    res.render('user/userhome');
+};
 
 
+// ========================== LOGOUT ==============================
+const logout = (req, res) => {
+    req.session.user = null;
+
+    // prevent back button access after logout
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+
+    return res.redirect('/user/login');
+};
+
+
+// ========================== LOAD PAGES ==========================
+const loadRegister = (req, res) => {
+    res.render('user/register');
+};
+
+const loadLogin = (req, res) => {
+    res.render('user/login');
+};
+
+
+// ========================== EXPORTS =============================
 module.exports = {
-  registerUser,
-  loadRegister,
-  loadLogin,
-  login,
-  loadHome,
-  logout
-}
-
-
-
-
-
-
+    registerUser,
+    loadRegister,
+    loadLogin,
+    login,
+    loadHome,
+    logout
+};
