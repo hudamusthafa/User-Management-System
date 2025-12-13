@@ -61,7 +61,7 @@ const login = async (req, res) => {
         // save session
         req.session.user = user._id;
 
-        return res.redirect('/user/home');
+        return res.redirect(303,'/user/home');
 
     } catch (error) {
         console.log(error);
@@ -72,18 +72,18 @@ const login = async (req, res) => {
 
 // ========================== HOME PAGE ============================
 const loadHome = (req, res) => {
-    // protect route
     if (!req.session.user) {
         return res.redirect('/user/login');
     }
 
-    // prevent back button showing cached home
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    // prevent back button
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
 
     res.render('user/userhome');
 };
+
 
 
 // ========================== LOGOUT ==============================
@@ -95,7 +95,7 @@ const logout = (req, res) => {
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
 
-    return res.redirect('/user/login');
+    return res.redirect(303,'/user/login');
 };
 
 

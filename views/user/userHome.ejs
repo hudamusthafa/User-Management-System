@@ -7,6 +7,18 @@
    <link rel="stylesheet" href="/styles/home.css">
 </head>
 <body>
+
+  <body>
+
+<script>
+  // Prevent BACK button after login
+  history.pushState(null, null, location.href);
+
+  window.onpopstate = function () {
+      history.go(1); // stay on home page
+  };
+</script>
+
   <header class="header">
   <h1 class="logo">Logo</h1>
   <ul class="nav">
