@@ -13,22 +13,35 @@ const registerUser = async (req, res) => {
             return res.render('user/register', { message: 'All fields are required' });
         }
 
-        // check duplicate email
+        // check duplicate email in database
         const userExists = await User.findOne({ email });
         if (userExists) {
             return res.render('user/register', { message: 'User already exists' });
         }
+        
+        const passwordRegex = /^(?=.*\d).{5,8}$/;
+
+        if (!passwordRegex.test(password)) {
+        return res.render('user/register', {
+            message: 'Password must be at least 8 characters and include at least one number'
+        });
+        }
+
 
         // hash password
         const hashedPassword = await bcrypt.hash(password, saltround);
 
-        // save user
+        // save user in database
         await User.create({
             email,
             password: hashedPassword
         });
 
-        return res.render('user/login', { message: 'User created successfully' });
+       
+         //  stay on register page
+    return res.render('user/register', {
+      message: 'User created successfully'
+    });
 
     } catch (error) {
         console.log(error);

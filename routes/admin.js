@@ -17,9 +17,6 @@ router.get("/addUserPage", adminAuth.checkSession, noCache, adminController.load
 // SAVE NEW USER
 router.post("/addUser", adminAuth.checkSession, noCache, adminController.addUser);
 
-// DELETE USER
-router.get("/delete/:id", adminAuth.checkSession, noCache, adminController.deleteUser);
-
 // SEARCH USER
 router.get("/search", adminAuth.checkSession, noCache, adminController.searchUser);
 
@@ -34,8 +31,14 @@ router.get("/edit/:id", adminAuth.checkSession, noCache, async (req, res) => {
     res.setHeader("Expires", "0");
 });
 
+router.get("/check-email",adminAuth.checkSession,noCache,adminController.checkEmail);
+
+
 // UPDATE USER
-router.post("/edit/:id", adminAuth.checkSession, noCache, adminController.updateUser);
+router.put("/user/:id", adminAuth.checkSession, noCache, adminController.updateUser);
+
+// DELETE USER
+router.get("/delete/:id", adminAuth.checkSession, noCache, adminController.deleteUser);
 
 // LOGOUT
 router.get("/logout", adminController.logout);

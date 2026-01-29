@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Dashboard</title>
+
   <link rel="stylesheet" href="/styles/admindashboard.css">
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
@@ -10,37 +11,46 @@
 <body>
 
 <script>
-  // OPTIONAL: only lock dashboard AFTER login (not required for cache)
+  // Prevent BACK button after logout
   history.pushState(null, null, location.href);
   window.onpopstate = function () {
-      history.go(1); // stay on dashboard
+    history.go(1);
   };
 </script>
 
 <div class="topbar">
   <h1>Admin Dashboard</h1>
   <div class="top-buttons">
-      <a href="/admin/addUserPage" class="btn add">Add User</a>
-      <a href="/admin/logout" class="btn logout">Logout</a>
+    <a href="/admin/addUserPage" class="btn add">Add User</a>
+    <a href="/admin/logout" class="btn logout">Logout</a>
   </div>
 </div>
 
-<form action="/admin/search" method="get" style="display:flex; gap:10px;">
-  <input 
-    type="text" 
-    name="query" 
-    placeholder="Search user by email..." 
+<!-- 🔍 DEBOUNCED SEARCH INPUT -->
+<div style="margin-bottom:15px; display:flex; gap:10px; align-items:center;">
+  
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search user by email..."
     value="<%= typeof query !== 'undefined' ? query : '' %>"
+    style="padding:10px; width:300px;"
   >
-  <button type="submit">Search</button>
 
-  <% if (typeof query !== 'undefined') { %>
-    <a href="/admin/dashboard" class="btn" 
-       style="padding:6px 12px; background:#ccc; text-decoration:none;">
+  <% if (typeof query !== 'undefined' && query) { %>
+    <a href="/admin/dashboard"
+       style="padding:10px 14px; background:#e5e7eb; text-decoration:none; border-radius:4px;">
       Clear
     </a>
   <% } %>
-</form>
+
+</div>
+
+<% if (typeof query !== 'undefined' && query) { %>
+  <p style="color:#6b7280; margin-bottom:10px;">
+    Showing results for "<strong><%= query %></strong>"
+  </p>
+<% } %>
 
 
 <table>
@@ -52,18 +62,28 @@
   </thead>
 
   <tbody>
+    <% if (users.length === 0) { %>
+      <tr>
+        <td colspan="2" style="text-align:center;">No users found</td>
+      </tr>
+    <% } %>
+
     <% users.forEach(u => { %>
       <tr>
         <td><%= u.email %></td>
         <td>
           <a href="/admin/edit/<%= u._id %>" class="action-btn btn-edit">Edit</a>
-          <button class="action-btn btn-delete" onclick="confirmDelete('<%= u._id %>')">Delete</button>
+          <button class="action-btn btn-delete" onclick="confirmDelete('<%= u._id %>')">
+            Delete
+          </button>
         </td>
       </tr>
     <% }) %>
   </tbody>
 </table>
+
 <script>
+  /* ===== DELETE CONFIRMATION ===== */
   function confirmDelete(userId) {
     swal({
       title: "Are you sure?",
@@ -71,14 +91,32 @@
       icon: "warning",
       buttons: ["Cancel", "Yes, Delete"],
       dangerMode: true,
-    })
-    .then((willDelete) => {
+    }).then((willDelete) => {
       if (willDelete) {
-        // Using assign() to avoid conflict with history blocking
         window.location.assign("/admin/delete/" + userId);
       }
     });
   }
+
+  /* ===== DEBOUNCED SEARCH ===== */
+  let debounceTimer;
+  const searchInput = document.getElementById("searchInput");
+
+  searchInput.addEventListener("input", function () {
+    const query = this.value.trim();
+
+    clearTimeout(debounceTimer);
+
+    debounceTimer = setTimeout(() => {
+      fetch(`/admin/search?query=${encodeURIComponent(query)}`)
+        .then(res => res.text())
+        .then(html => {
+          document.open();
+          document.write(html);
+          document.close();
+        });
+    }, 500); // debounce delay
+  });
 </script>
 
 </body>

@@ -1,80 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REGISTER</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" integrity="sha512-PgQMlq+nqFLV4ylk1gwUOgm6CtIIXkKwaIHp/PAIWHzig/lKZSEGKEysh0TCVbHJXCLN7WetD8TFecIky75ZfQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="/styles/userlogin.css">
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <!-- Register CSS -->
+  <link rel="stylesheet" href="/styles/registeruser.css">
 </head>
 <body>
-        <div class="alert show hide alert-wrong" id="alert">
-            <span class="fas fa-exclamation-circle"></span>
-            <span class="msg">Invalid Username and Password</span>
-            <span class="close-btn">
-                <span class="fas fa-times" onclick="hidefun()"></span>
-            </span>
-        </div>
 
+<div class="container">
+  <div class="signin">
+    <h1>Register</h1>
 
+    <!-- Backend message -->
+    <% if (typeof message !== 'undefined') { %>
+      <p class="msg <%= message.toLowerCase().includes('success') ? 'success' : 'error' %>">
+        <%= message %>
+      </p>
+    <% } %>
 
-    <div class="container">
-     
-        <div class="signin">
-            <h1>Register</h1>
-            <form onsubmit="formValidate()"  method="post"  action="/user/register">
-             
-                <input type="email" id="email"  name="email" placeholder="Email" >
-                <input type="password" id="password" name="password" placeholder="Password" >
-                 <input type="password" id="confirmpassword" name="confirmpassword" placeholder=" Confirm Password" >
+    <!-- Client-side message -->
+    <p id="clientMessage" class="msg"></p>
 
+    <form method="post" action="/user/register" onsubmit="formValidate(event)">
+      
+      <input
+        type="email"
+        id="email"
+        name="email"
+        placeholder="email@gmail.com"
+      >
 
-                <button type="submit" id="button" onclick="getInfo(event)"  href="welcome.html">Login</button>
-         
-                <!-- <input type="submit" id="button" onclick="getInfo()" value="Login"> -->
-            </form>
-        </div>
-    </div>
-    <script>
+      <div class="password-box">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+        >
+        <i class="fas fa-eye" onclick="togglePassword('password', this)"></i>
+      </div>
 
+      <div class="password-box">
+        <input
+          type="password"
+          id="confirmpassword"
+          name="confirmpassword"
+          placeholder="Confirm Password"
+        >
+        <i class="fas fa-eye" onclick="togglePassword('confirmpassword', this)"></i>
+      </div>
 
-    document.addEventListener("DOMContentLoaded",function (){
-       document.querySelector('form').addEventListener('submit',formValidate);
-    });
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</div>
 
-
-
-  
-  const message = "<%= typeof message !== 'undefined' ? message : '' %>";
-
-  if (message.trim() !== "") {
-    swal(message);
+<script>
+  function showMessage(text, type) {
+    const box = document.getElementById("clientMessage");
+    box.textContent = text;
+    box.className = "msg " + type;
   }
 
+  function togglePassword(id, icon) {
+    const input = document.getElementById(id);
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      input.type = "password";
+      icon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  }
 
-         function formValidate(e){
+  function formValidate(e) {
+    e.preventDefault();
 
-          e.preventDefault();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirmpassword").value.trim();
 
-          var email = document.getElementById('email').value;
-          var password = document.getElementById('password').value;
-          var confirmpassword = document.getElementById('confirmpassword').value;
+    if (!email || !password || !confirmPassword) {
+      showMessage("All fields are required", "error");
+      return;
+    }
 
-          if(email == "" || password == "" || confirmpassword == ""){
-            swal("All fields are required");
-            return false;
-          }else if(password != confirmpassword){
-            swal("password dod not match");
-            return false;
-          }
-          e.target.submit();
-          return true;
-         }
-    
-       
-  
-    </script>
+    const passwordRegex = /^(?=.*\d).{6,10}$/;
+    if (!passwordRegex.test(password)) {
+      showMessage("Password must be 6–10 characters and include at least one number", "error");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      showMessage("Passwords do not match", "error");
+      return;
+    }
+
+    window.open("/user/login", "_blank");
+    e.target.submit();
+  }
+</script>
+
 </body>
 </html>

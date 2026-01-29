@@ -28,9 +28,10 @@ app.use(express.static("public"))
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
-
+//creating routes
 app.use("/user",userRoutes)
 app.use("/admin",adminRoutes)
+
 
 connectDB();
 

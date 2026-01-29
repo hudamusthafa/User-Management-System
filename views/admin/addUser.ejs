@@ -1,85 +1,86 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Add User</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Add New User</title>
+  <link rel="stylesheet" href="/styles/adduser.css">
 
-  <!-- No Cache -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  
 </head>
-
 <body>
 
-<h2>Add New User</h2>
+<div class="form-card">
+  <h2>Add New User</h2>
 
-<!-- Backend validation error -->
-<% if (message) { %>
-  <p style="color:red;"><%= message %></p>
-<% } %>
+  <% if (message) { %>
+    <div class="backend-error" id="serverMessage">
+      <%= message %>
+    </div>
+  <% } %>
 
-<form action="/admin/addUser" method="post" onsubmit="return validateForm()">
-  
-  <label>Email</label><br>
-  <input type="email" id="email" name="email">
-  <span id="emailError" style="color:red; font-size:14px;"></span>
-  <br><br>
+  <form action="/admin/addUser" method="post" id="addUserForm">
+    
+    <label for="email">Email Address</label>
+    <input type="email" id="email" name="email" placeholder="example@gmail.com">
+    <span id="emailError" class="error-text"></span>
 
-  <label>Password</label><br>
-  <input type="password" id="password" name="password">
-  <span id="passwordError" style="color:red; font-size:14px;"></span>
-  <br><br>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" placeholder="••••••••">
+    <span id="passwordError" class="error-text"></span>
 
-  <button type="submit">Save User</button>
-</form>
+    <button type="submit" class="btn-save">Save User</button>
+  </form>
 
-<br>
-<a href="/admin/dashboard">Back</a>
+  <a href="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+</div>
 
 <script>
-  // ⭐ FRONT-END VALIDATION
-  function validateForm() {
-    let email = document.getElementById("email").value.trim();
-    let password = document.getElementById("password").value.trim();
+  const form = document.getElementById('addUserForm');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const emailError = document.getElementById('emailError');
+  const passwordError = document.getElementById('passwordError');
+  const serverMsg = document.getElementById('serverMessage');
 
-    let emailError = document.getElementById("emailError");
-    let passwordError = document.getElementById("passwordError");
-
-    emailError.textContent = "";
-    passwordError.textContent = "";
-
+  form.addEventListener('submit', function(e) {
     let valid = true;
 
-    // Email Required
-    if (email === "") {
+    // Clear previous frontend errors
+    emailError.textContent = "";
+    passwordError.textContent = "";
+    
+    // Hide the "Email already exists" message if the user clicks again
+    if(serverMsg) serverMsg.style.display = 'none';
+
+    // 1. Check Email (MANDATORY)
+    if (emailInput.value.trim() === "") {
       emailError.textContent = "Email is required";
       valid = false;
-    } else {
-      // Email Format Validation
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(email)) {
-        emailError.textContent = "Please enter a valid email";
-        valid = false;
-      }
     }
 
-    // Password Required
-    if (password === "") {
-      passwordError.textContent = "Password is required";
-      valid = false;
-    } 
-    // OPTIONAL: Minimum length rule
-    // else if (password.length < 6) {
-    //   passwordError.textContent = "Password must be at least 6 characters long";
-    //   valid = false;
-    // }
+    // 2. PASSWORD LOGIC:
+    // We only block the submit if BOTH fields are empty.
+    // If the Email is filled, we ALLOW the submit even if Password is empty.
+    // This allows your server to check the database for the duplicate email.
+    if (emailInput.value.trim() !== "" && passwordInput.value.trim() === "") {
+        // Allow the submit to proceed to server to check for duplicate email
+        valid = true; 
+    } else if (emailInput.value.trim() === "" && passwordInput.value.trim() === "") {
+        passwordError.textContent = "Password is required";
+        valid = false;
+    }
 
-    return valid; // prevent submit if validation fails
-  }
-</script>
+    if (!valid) {
+      e.preventDefault(); // Stop only if truly invalid
+    }
+  });
 
-<script>
-  // 🔥 Remove AddUser page from history so BACK never returns here
+  // Security: Clean history
   history.replaceState(null, "", "/admin/dashboard");
 </script>
 

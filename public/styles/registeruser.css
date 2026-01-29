@@ -18,7 +18,7 @@ body {
   background-attachment: fixed;
 }
 
-/* ===== Container ===== */
+/* ===== Layout ===== */
 .container {
   position: relative;
   top: 50%;
@@ -27,7 +27,6 @@ body {
   width: 25rem;
 }
 
-/* ===== Card ===== */
 .signin {
   color: white;
   background: rgba(48, 30, 30, 0.1);
@@ -37,11 +36,10 @@ body {
   backdrop-filter: blur(30px);
 }
 
-/* ===== Heading ===== */
 .container h1 {
   font-size: 2.5rem;
   text-align: center;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.5rem;
 }
 
 /* ===== Inputs ===== */
@@ -61,25 +59,22 @@ body {
   color: white;
 }
 
-/* ===== Password Box + Eye ===== */
+/* ===== Password + Eye ===== */
 .password-box {
   position: relative;
-  margin-top: 1rem;
 }
 
 .password-box input {
-  padding-right: 45px; /* space for eye icon */
+  padding-right: 42px;
 }
 
 .password-box i {
   position: absolute;
-  right: 15px;
+  right: 14px;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
-  font-size: 18px;
   color: white;
-  z-index: 2;
 }
 
 /* ===== Button ===== */
@@ -103,18 +98,16 @@ body {
 /* ===== Messages ===== */
 .msg {
   text-align: center;
-  margin-bottom: 14px;
-  font-size: 15px;
-  font-weight: 500;
+  margin-bottom: 12px;
+  font-size: 14px;
 }
 
-/* Force visible colors (override white text) */
 .msg.error {
-  color: #ff4d4d !important;
+  color: #ff4d4d;
 }
 
 .msg.success {
-  color: #4da6ff !important;
+  color: #4da6ff;
 }
 
 /* ===== Responsive ===== */
