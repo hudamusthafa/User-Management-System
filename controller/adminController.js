@@ -204,11 +204,37 @@ const updateUser = async (req, res) => {
     const { email, password } = req.body;
     const userId = req.params.id;
 
+
     if (!email) {
       return res.json({
         success: false,
         message: "Email is required"
-      });
+      })};
+
+        if (!email) {
+            return res.render("admin/editUser", { message: "Email is required" });
+        }
+
+
+        // check duplicate email except current user
+        const existing = await userModel.findOne({
+            email,
+            _id: { $ne: req.params.id }
+        });
+      // res.render("admin/editUser",{message:"Email is already exists"})
+        if (existing) {
+            const user = await userModel.findById(req.params.id);
+            return res.render("admin/editUser", { user, message: "Email already exists" });
+        }
+
+        await userModel.findByIdAndUpdate(req.params.id, { email });
+
+        res.redirect(303,"/admin/dashboard");
+
+    } catch (err) {
+        console.log(err);
+        res.redirect("/admin/dashboard");
+
     }
 
     //  duplicate email check (exclude current user)
